@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+service FileService {
+  rpc ConvertToPng (FileRequest) returns (FileResponse);
+  rpc BatchConvertToPng (BatchFileRequest) returns (BatchFileResponse);
+  rpc UploadDicom (UploadRequest) returns (UploadResponse);
+  rpc QueryTags (TagQueryRequest) returns (TagQueryResponse);
+}
+message UploadRequest {
+  string filename = 1;
+  bytes data = 2;
+}
+
+message UploadResponse {
+  string message = 1;
+  string filename = 2;
+}
+
+message FileRequest {
+  string filename = 1;
+}
+
+message FileResponse {
+  string filename = 1;
+  string converted_path = 2;
+}
+
+message BatchFileRequest {
+  repeated string filenames = 1;
+}
+
+message BatchFileResponse {
+  string file_path = 1;
+  string content_type = 2; // e.g. "image/png" or "application/zip"
+  string filename = 3;
+}
+
+message TagQueryRequest {
+  string file_name = 1;
+  repeated string tags = 2; // Optional filter
+}
+message Tag {
+  string tag = 1;
+  string value = 2;
+}
+
+message TagQueryResponse {
+  string file_name = 1;
+  repeated Tag results = 2;
+}

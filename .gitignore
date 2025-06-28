@@ -1,0 +1,8 @@
+uploads/
+converted/
+*.pyc
+__pycache__/
+.DS_Store
+my_database.db
+.dockerignore
+rest_api/Dockerfile
