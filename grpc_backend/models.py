@@ -5,7 +5,6 @@ from grpc_backend.db import Base
 
 class File(Base):
     __tablename__ = "files"
-    print("📋 Tables:")
     id = Column(Integer, primary_key=True)
     file_name = Column(String, unique=True)
     uploaded_at = Column(DateTime, default=datetime.now)
@@ -17,7 +16,6 @@ class File(Base):
 
 class DicomTag(Base):
     __tablename__ = "dicom_tags"
-    print("📋 Tags:")
     id = Column(Integer, primary_key=True)
     file_id = Column(Integer, ForeignKey("files.id"))
     names = Column(String) #attribute name

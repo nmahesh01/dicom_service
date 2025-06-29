@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1fgrpc_backend/file_service.proto\"/\n\rUploadRequest\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"3\n\x0eUploadResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\"\x1f\n\x0b\x46ileRequest\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\"8\n\x0c\x46ileResponse\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x16\n\x0e\x63onverted_path\x18\x02 \x01(\t\"%\n\x10\x42\x61tchFileRequest\x12\x11\n\tfilenames\x18\x01 \x03(\t\"N\n\x11\x42\x61tchFileResponse\x12\x11\n\tfile_path\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontent_type\x18\x02 \x01(\t\x12\x10\n\x08\x66ilename\x18\x03 \x01(\t\"2\n\x0fTagQueryRequest\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x0c\n\x04tags\x18\x02 \x03(\t\"!\n\x03Tag\x12\x0b\n\x03tag\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"<\n\x10TagQueryResponse\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x15\n\x07results\x18\x02 \x03(\x0b\x32\x04.Tag2\xd8\x01\n\x0b\x46ileService\x12+\n\x0c\x43onvertToPng\x12\x0c.FileRequest\x1a\r.FileResponse\x12:\n\x11\x42\x61tchConvertToPng\x12\x11.BatchFileRequest\x1a\x12.BatchFileResponse\x12.\n\x0bUploadDicom\x12\x0e.UploadRequest\x1a\x0f.UploadResponse\x12\x30\n\tQueryTags\x12\x10.TagQueryRequest\x1a\x11.TagQueryResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1fgrpc_backend/file_service.proto\"/\n\rUploadRequest\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"3\n\x0eUploadResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\"%\n\x10\x42\x61tchFileRequest\x12\x11\n\tfilenames\x18\x01 \x03(\t\"N\n\x11\x42\x61tchFileResponse\x12\x11\n\tfile_path\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontent_type\x18\x02 \x01(\t\x12\x10\n\x08\x66ilename\x18\x03 \x01(\t\"2\n\x0fTagQueryRequest\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x0c\n\x04tags\x18\x02 \x03(\t\"!\n\x03Tag\x12\x0b\n\x03tag\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"<\n\x10TagQueryResponse\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x15\n\x07results\x18\x02 \x03(\x0b\x32\x04.Tag2\xab\x01\n\x0b\x46ileService\x12:\n\x11\x42\x61tchConvertToPng\x12\x11.BatchFileRequest\x1a\x12.BatchFileResponse\x12.\n\x0bUploadDicom\x12\x0e.UploadRequest\x1a\x0f.UploadResponse\x12\x30\n\tQueryTags\x12\x10.TagQueryRequest\x1a\x11.TagQueryResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,20 +35,16 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_UPLOADREQUEST']._serialized_end=82
   _globals['_UPLOADRESPONSE']._serialized_start=84
   _globals['_UPLOADRESPONSE']._serialized_end=135
-  _globals['_FILEREQUEST']._serialized_start=137
-  _globals['_FILEREQUEST']._serialized_end=168
-  _globals['_FILERESPONSE']._serialized_start=170
-  _globals['_FILERESPONSE']._serialized_end=226
-  _globals['_BATCHFILEREQUEST']._serialized_start=228
-  _globals['_BATCHFILEREQUEST']._serialized_end=265
-  _globals['_BATCHFILERESPONSE']._serialized_start=267
-  _globals['_BATCHFILERESPONSE']._serialized_end=345
-  _globals['_TAGQUERYREQUEST']._serialized_start=347
-  _globals['_TAGQUERYREQUEST']._serialized_end=397
-  _globals['_TAG']._serialized_start=399
-  _globals['_TAG']._serialized_end=432
-  _globals['_TAGQUERYRESPONSE']._serialized_start=434
-  _globals['_TAGQUERYRESPONSE']._serialized_end=494
-  _globals['_FILESERVICE']._serialized_start=497
-  _globals['_FILESERVICE']._serialized_end=713
+  _globals['_BATCHFILEREQUEST']._serialized_start=137
+  _globals['_BATCHFILEREQUEST']._serialized_end=174
+  _globals['_BATCHFILERESPONSE']._serialized_start=176
+  _globals['_BATCHFILERESPONSE']._serialized_end=254
+  _globals['_TAGQUERYREQUEST']._serialized_start=256
+  _globals['_TAGQUERYREQUEST']._serialized_end=306
+  _globals['_TAG']._serialized_start=308
+  _globals['_TAG']._serialized_end=341
+  _globals['_TAGQUERYRESPONSE']._serialized_start=343
+  _globals['_TAGQUERYRESPONSE']._serialized_end=403
+  _globals['_FILESERVICE']._serialized_start=406
+  _globals['_FILESERVICE']._serialized_end=577
 # @@protoc_insertion_point(module_scope)

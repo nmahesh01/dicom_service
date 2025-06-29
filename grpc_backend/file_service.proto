@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 service FileService {
-  rpc ConvertToPng (FileRequest) returns (FileResponse);
   rpc BatchConvertToPng (BatchFileRequest) returns (BatchFileResponse);
   rpc UploadDicom (UploadRequest) returns (UploadResponse);
   rpc QueryTags (TagQueryRequest) returns (TagQueryResponse);
@@ -14,15 +13,6 @@ message UploadRequest {
 message UploadResponse {
   string message = 1;
   string filename = 2;
-}
-
-message FileRequest {
-  string filename = 1;
-}
-
-message FileResponse {
-  string filename = 1;
-  string converted_path = 2;
 }
 
 message BatchFileRequest {

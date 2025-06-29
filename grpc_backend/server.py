@@ -6,14 +6,12 @@ import grpc
 from concurrent import futures
 import file_service_pb2
 import file_service_pb2_grpc
-from tag_extractor import extract_dicom_tags_old
 import os
 from io import BytesIO
 from models import File , DicomTag
 from grpc_backend.db import engine, Base, SessionLocal
-from sqlalchemy import inspect
+from sqlalchemy import func
 from zipfile import ZipFile
-
 
 
 default_upload_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../uploads")))
@@ -21,17 +19,13 @@ UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", default_upload_dir)).resolve()
 
 default_converted_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../converted")))
 CONVERTED_DIR = Path(os.environ.get("CONVERTED_DIR", default_converted_dir)).resolve()
-
-UPLOAD_DIR.mkdir(exist_ok=True)
-CONVERTED_DIR.mkdir(exist_ok=True)
-
-
 class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
 
     def UploadDicom(self, request, context):
         #this method handles the upload of the dicom file + generating the tags and adding them to the database
         filename = request.filename
         request_data = request.data
+        UPLOAD_DIR.mkdir(exist_ok=True)
         input_path = UPLOAD_DIR / filename
         file_size = len(request_data)
         session = SessionLocal()
@@ -86,6 +80,7 @@ class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
 
     def BatchConvertToPng(self, request, context):
         paths = []
+        CONVERTED_DIR.mkdir(exist_ok=True)
         session = SessionLocal()
         for fname in request.filenames:
             file = session.query(File).filter_by(file_name=fname).first()
@@ -144,12 +139,8 @@ class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
         tag_names = request.tags  # human-readable tag names like "PatientName"
 
         query = (
-            session.query(File.file_name, DicomTag.names, DicomTag.value)
-            .join(DicomTag)
-            .filter(File.file_name == filename)
-            .filter(DicomTag.names.in_(tag_names))
+            session.query(File.file_name,DicomTag.names,func.min(DicomTag.value).label("value")).join(DicomTag, File.id == DicomTag.file_id).filter(File.file_name ==filename).filter(DicomTag.names.in_(tag_names)).group_by(File.file_name, DicomTag.names)
         )
-
         results = query.all()
         session.close()
 
@@ -162,28 +153,6 @@ class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
                 )
             )
         return response
-
-
-
-    def ExtractDicomTags(self, request, context):
-        input_path = UPLOAD_DIR / request.filename
-        if not input_path.exists():
-            context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details("File not found")
-            return file_service_pb2.TagResponse()
-
-        try:
-            tag_list = list(request.tags)
-            result = extract_dicom_tags_old(input_path, tag_list)
-            tag_entries = [
-                file_service_pb2.TagEntry(tag=tag, name=entry.get("name", ""), value=entry.get("value", entry.get("error", "Error")))
-                for tag, entry in result.items()
-            ]
-            return file_service_pb2.TagResponse(entries=tag_entries)
-        except Exception as e:
-            context.set_code(grpc.StatusCode.INTERNAL)
-            context.set_details(str(e))
-            return file_service_pb2.TagResponse()
 
 def serve():
     Base.metadata.create_all(bind=engine)
