@@ -74,7 +74,7 @@ def convert_dicom_batch():
     exisiting_filename  =[]
     missing_files = []
     directory = UPLOAD_DIR
-    if type(filenames) == 'list':
+    if isinstance(filenames, list):
         for filename in filenames:
             if os.path.isfile(os.path.join(directory, filename)):
                 exisiting_filename.append(filename)

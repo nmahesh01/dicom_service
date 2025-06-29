@@ -12,14 +12,15 @@ from io import BytesIO
 from models import File , DicomTag
 from grpc_backend.db import engine, Base, SessionLocal
 from sqlalchemy import inspect
+from zipfile import ZipFile
 
 
 
 default_upload_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../uploads")))
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", default_upload_dir)).resolve()
 
-default_upload_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../converted")))
-CONVERTED_DIR = Path(os.environ.get("CONVERTED_DIR", default_upload_dir)).resolve()
+default_converted_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../converted")))
+CONVERTED_DIR = Path(os.environ.get("CONVERTED_DIR", default_converted_dir)).resolve()
 
 UPLOAD_DIR.mkdir(exist_ok=True)
 CONVERTED_DIR.mkdir(exist_ok=True)
@@ -108,6 +109,24 @@ class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
                     content_type="image/png",
                     filename=fname
                 )
+        else:
+            zip_path = CONVERTED_DIR / "converted_images.zip"
+            with ZipFile(zip_path, "w") as zipf:
+                for fname, input_path in paths:
+                    png_path = CONVERTED_DIR / f"{Path(fname).stem}.png"
+                    try:
+                        self.dcm_to_png_file(input_path, png_path)
+                        zipf.write(png_path, png_path.name)
+                        file = session.query(File).filter_by(file_name=fname).first()
+                        if file:
+                            file.converted_path = str(png_path)
+                            
+                    except Exception as e:
+                        print(f"Failed to convert {fname}: {e}")
+            session.commit()
+            session.close()
+
+            return file_service_pb2.BatchFileResponse(file_path=str(zip_path),content_type="application/zip",filename=zip_path.name)
         
     @staticmethod
     def dcm_to_png_file(dcm_path: Path, out_path: Path):
