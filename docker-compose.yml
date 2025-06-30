@@ -1,0 +1,24 @@
+services:
+  grpc_backend:
+    build:
+      context: .
+      dockerfile: grpc_backend/Dockerfile
+    ports:
+      - "50051:50051"
+    volumes:
+      - ../uploads:/app/uploads
+      - ../converted:/app/converted
+
+  rest_api:
+    build:
+      context: .
+      dockerfile: rest_api/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - grpc_backend
+    environment:
+      - GRPC_BACKEND_HOST=grpc_backend
+    #volumes:
+    #  - ../uploads:/app/uploads
+    #  - ../converted:/app/converted

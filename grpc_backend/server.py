@@ -85,13 +85,14 @@ class FileServiceServicer(file_service_pb2_grpc.FileServiceServicer):
         for fname in request.filenames:
             file = session.query(File).filter_by(file_name=fname).first()
             if file and file.uploaded_path:
+                if not Path(file.uploaded_path).exists():
+                    continue
                 paths.append((fname, Path(file.uploaded_path)))
-            if not paths:
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("No valid files found.")
-                session.close()
-
-                return file_service_pb2.BatchFileResponse()
+        if not paths:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("No valid files found.")
+            session.close()
+            return file_service_pb2.BatchFileResponse()
         if len(paths) == 1:
             fname, input_path = paths[0]
             out_path = CONVERTED_DIR / f"{Path(fname).stem}.png"

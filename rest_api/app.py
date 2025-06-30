@@ -1,20 +1,8 @@
-import sys
 from flask import Flask, request, jsonify, send_file
-from pathlib import Path
-import pydicom
 import grpc
-from sqlalchemy.exc import IntegrityError
-import zipfile
-import tempfile
-from datetime import datetime
 import os
 from grpc_backend import file_service_pb2, file_service_pb2_grpc
 
-default_upload_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../uploads")))
-UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", default_upload_dir)).resolve()
-
-default_upload_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../converted")))
-CONVERTED_DIR = Path(os.environ.get("CONVERTED_DIR", default_upload_dir)).resolve()
 
 app = Flask(__name__)
 
@@ -71,29 +59,10 @@ def convert_dicom_batch():
     filenames = data.get("filenames")
     if not filenames:
         return jsonify({"error": "Missing or invalid 'filenames' list"}), 400
-    exisiting_filename  =[]
-    missing_files = []
-    directory = UPLOAD_DIR
-    if isinstance(filenames, list):
-        for filename in filenames:
-            if os.path.isfile(os.path.join(directory, filename)):
-                exisiting_filename.append(filename)
-            else:
-                missing_files.append(filename)
-    else:
-        if os.path.isfile(os.path.join(directory, filenames)):
-                exisiting_filename.append(filenames)
-        else:
-            missing_files.append(filenames)
-
-    if missing_files:
-        print(f"Files not found in upload dir: {missing_files}")
-
-    if not exisiting_filename:
-        return jsonify({"error": "No valid files found for conversion"}), 404
-
+    if not isinstance(filenames, list):
+        filenames = [filenames] 
     try:
-        grpc_request = file_service_pb2.BatchFileRequest(filenames=exisiting_filename)
+        grpc_request = file_service_pb2.BatchFileRequest(filenames=filenames)
         grpc_response = grpc_stub.BatchConvertToPng(grpc_request)
     except grpc.RpcError as e:
         return jsonify({"error": f"gRPC error: {e.details()}"}), 500
