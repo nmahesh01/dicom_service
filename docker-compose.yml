@@ -6,7 +6,7 @@ services:
     ports:
       - "50051:50051"
     volumes:
-      - ../uploads:/app/uploads
+      - ../uploads:/app/uploads 
       - ../converted:/app/converted
 
   rest_api:
@@ -19,6 +19,5 @@ services:
       - grpc_backend
     environment:
       - GRPC_BACKEND_HOST=grpc_backend
-    #volumes:
-    #  - ../uploads:/app/uploads
-    #  - ../converted:/app/converted
+    volumes:
+      - ../converted:/app/converted
